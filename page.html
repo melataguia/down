@@ -1,0 +1,42 @@
+<html>
+<head>
+    <title>Téléchargement Vidéo</title>
+</head>
+<body>
+    <h1>Télécharger une vidéo</h1>
+    <form id="downloadForm">
+        <input type="text" id="url" placeholder="Entrez l'URL de la vidéo" required>
+        <button type="submit">Télécharger</button>
+    </form>
+    <p id="message"></p>
+
+    <script>
+        document.getElementById("downloadForm").onsubmit = async function(event) {
+            event.preventDefault();
+            
+            // Récupération de l'URL entrée
+            const url = document.getElementById("url").value;
+            
+            // Envoi de la requête POST à l'API FastAPI
+            try {
+                const response = await fetch('https://your-heroku-app.herokuapp.com/download/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url: url })
+                });
+
+                // Vérification de la réponse de l'API
+                if (response.ok) {
+                    const data = await response.json();
+                    document.getElementById("message").innerText = data.message || 'Téléchargement terminé!';
+                } else {
+                    const errorData = await response.json();
+                    document.getElementById("message").innerText = errorData.error || 'Erreur inconnue.';
+                }
+            } catch (error) {
+                document.getElementById("message").innerText = 'Erreur de connexion à l\'API.';
+            }
+        }
+    </script>
+</body>
+</html>
